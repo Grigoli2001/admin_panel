@@ -11,6 +11,7 @@ export interface AuthContextType {
   ) => Promise<void>;
 
   logout: () => Promise<void>;
+  isLoading: boolean;
 }
 
 export interface MeResponse {
