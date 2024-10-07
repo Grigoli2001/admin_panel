@@ -1,9 +1,11 @@
 import {
   createContext,
   useState,
+  useCallback,
   useLayoutEffect,
-  ReactNode,
   useEffect,
+  useRef,
+  ReactNode,
 } from "react";
 import api from "../hooks/axios";
 import { AuthContextType, MeResponse } from "../types/auth.types";
@@ -16,6 +18,7 @@ import {
 import { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
+
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
@@ -30,62 +33,75 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken")
   );
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Store the token in localStorage whenever it changes
-  // useEffect(() => {
-  //   if (token) {
-  //     localStorage.setItem("accessToken", token);
-  //   } else {
-  //     localStorage.removeItem("accessToken");
-  //   }
-  // }, [token]);
+  const tokenRef = useRef(token);
 
+  const fetchUser = useCallback(async () => {
+    try {
+      const fetchedUser = await getMeApi();
+      setUser(fetchedUser);
+      setIsSuperAdmin(fetchedUser.superAdmin);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  }, []);
   useEffect(() => {
-    const fetchUser = async () => {
-      console.log("fetchUser");
-      try {
-        const user = await getMeApi();
-        setUser(user);
-        setIsSuperAdmin(user.superAdmin);
-      } catch (error) {
-        console.error(error);
+    const initializeAuth = async () => {
+      if (isAuthenticated) {
+        setIsLoading(true);
+        try {
+          await fetchUser();
+        } catch (error) {
+          console.error("Error fetching user:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
       }
     };
 
-    if (isAuthenticated) {
+    initializeAuth();
+  }, [isAuthenticated, fetchUser]);
+
+  useEffect(() => {
+    if (isAuthenticated && !user) {
       fetchUser();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user, fetchUser]);
 
-  const login = async (
-    email: string,
-    password: string,
-    rememberMe: boolean
-  ) => {
-    console.log("login");
-    try {
-      const response = await loginApi(email, password);
-      if (!response || !response.accessToken) {
-        throw new Error("Login failed, no accessToken found");
+  const login = useCallback(
+    async (email: string, password: string, rememberMe: boolean) => {
+      setIsLoading(true);
+      try {
+        const response = await loginApi(email, password);
+        if (!response || !response.accessToken) {
+          throw new Error("Login failed, no accessToken found");
+        }
+        const { accessToken } = response;
+
+        if (rememberMe) {
+          localStorage.setItem("accessToken", accessToken);
+        } else {
+          sessionStorage.setItem("accessToken", accessToken);
+        }
+
+        setToken(accessToken);
+        setIsAuthenticated(true);
+        await fetchUser();
+      } catch (error) {
+        console.error("Login error:", error);
+        throw error;
+      } finally {
+        setIsLoading(false);
       }
-      const { accessToken } = response;
+    },
+    [fetchUser]
+  );
 
-      if (rememberMe) {
-        localStorage.setItem("accessToken", accessToken);
-      } else {
-        sessionStorage.setItem("accessToken", accessToken);
-      }
-
-      setToken(accessToken);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
-  const logout = async () => {
-    console.log("logout");
+  const logout = useCallback(async () => {
+    setIsLoading(true);
     try {
       await logoutApi();
       localStorage.removeItem("accessToken");
@@ -93,31 +109,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setToken(null);
       setIsAuthenticated(false);
       setUser(null);
+      setIsSuperAdmin(false);
     } catch (error) {
-      console.error(error);
+      console.error("Logout error:", error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, []);
 
   useLayoutEffect(() => {
-    console.log("useLayoutEffect token", token);
     const authInterceptor = api.interceptors.request.use(
       (config: CustomAxiosRequestConfig) => {
-        config.headers = config.headers || {};
-        config.headers.Authorization =
-          !config._retry && token
-            ? `Bearer ${token}`
-            : config.headers.Authorization;
+        if (!config._retry && tokenRef.current) {
+          config.headers = config.headers || {};
+          config.headers.Authorization = `Bearer ${tokenRef.current}`;
+        }
         return config;
       }
     );
 
-    return () => {
-      api.interceptors.request.eject(authInterceptor);
-    };
-  }, [token]);
-
-  useLayoutEffect(() => {
-    console.log("useLayoutEffect refreshInterceptor");
     const refreshInterceptor = api.interceptors.response.use(
       (response: AxiosResponse) => response,
       async (error: AxiosError) => {
@@ -132,6 +142,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           originalRequest._retry = true;
           try {
             const { accessToken } = await refreshToken();
+            console.log("Access token refreshed:", accessToken);
             if (!accessToken) {
               throw new Error("Access token not found");
             }
@@ -144,20 +155,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsAuthenticated(true);
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
             return api(originalRequest);
-          } catch (error) {
+          } catch (refreshError) {
+            console.error("Error refreshing token:", refreshError);
             logout();
-            console.error(error);
-            console.log("error in refresh token");
           }
+        } else if (
+          error.response?.status === 401 &&
+          errorMessage === "No session user provided"
+        ) {
+          logout();
         }
-
         return Promise.reject(error);
       }
     );
 
     return () => {
+      api.interceptors.request.eject(authInterceptor);
       api.interceptors.response.eject(refreshInterceptor);
     };
+  }, [logout]);
+
+  useEffect(() => {
+    tokenRef.current = token;
   }, [token]);
 
   return (
@@ -168,6 +187,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isSuperAdmin,
         login,
         logout,
+        isLoading,
       }}
     >
       {children}

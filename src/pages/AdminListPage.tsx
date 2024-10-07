@@ -41,6 +41,7 @@ const AdminListPage: React.FC = () => {
     queryKey: ["admins"],
     queryFn: getAdmins,
   });
+  console.log(error);
 
   const mutation = useMutation({
     mutationFn: ({
@@ -80,7 +81,7 @@ const AdminListPage: React.FC = () => {
     : [];
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 90 },
+    // { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Name", width: 150 },
     { field: "email", headerName: "Email", width: 150 },
     { field: "status", headerName: "Status", width: 150 },
@@ -89,6 +90,8 @@ const AdminListPage: React.FC = () => {
       field: "actions",
       headerName: "Actions",
       width: 150,
+      filterable: false,
+      sortable: false,
       renderCell: (params) => (
         <Button
           onClick={() =>
@@ -101,7 +104,6 @@ const AdminListPage: React.FC = () => {
           {params.row.status == "active" ? "Deactivate" : "Activate"}
         </Button>
       ),
-      filterable: false,
     },
   ];
 
@@ -137,7 +139,6 @@ const AdminListPage: React.FC = () => {
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
-  if (error) return <Typography>Error fetching admins.</Typography>;
 
   return (
     <Container>
@@ -153,6 +154,7 @@ const AdminListPage: React.FC = () => {
         </Button>
       </Box>
       <DataGrid
+        sx={{ minHeight: 600 }}
         pagination
         rows={rows}
         columns={columns}

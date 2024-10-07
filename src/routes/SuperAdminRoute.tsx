@@ -2,9 +2,14 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 
 const SuperAdminRoute = () => {
-  const { isSuperAdmin } = useAuth();
+  const { isSuperAdmin, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   if (!isSuperAdmin) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return <Outlet />;

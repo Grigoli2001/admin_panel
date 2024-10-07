@@ -22,10 +22,10 @@ const router = createBrowserRouter(
 
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
+          <Route index element={<BlogPage />} />
           <Route element={<SuperAdminRoute />}>
-            <Route index element={<BlogPage />} />
+            <Route path="admins" element={<AdminListPage />} />
           </Route>
-          <Route path="admins" element={<AdminListPage />} />
         </Route>
       </Route>
     </Route>
