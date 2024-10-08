@@ -4,17 +4,11 @@ import { blogRequests } from "../constants/requests";
 import { Blog, BlogResponse } from "../types/blog.types";
 
 export const createBlog = async (formData: FormData): Promise<Response> => {
-  const response = await api.post(
-    blogRequests.createBlog.url,
-    {
-      formData,
+  const response = await api.post(blogRequests.createBlog.url, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
     },
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+  });
   return response.data;
 };
 

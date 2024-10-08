@@ -15,10 +15,11 @@ import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import RssFeedRoundedIcon from "@mui/icons-material/RssFeedRounded";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useQuery } from "@tanstack/react-query";
 import { getBlogs } from "../api/blog";
 import { Blog } from "../types/blog.types";
+import CreateBlogForm from "../components/CreateBlog";
 import {
   InputLabel,
   MenuItem,
@@ -104,6 +105,8 @@ function Author({ name, updated_at }: { name: string; updated_at: string }) {
 }
 
 export default function BlogPage() {
+  const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
+
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null
   );
@@ -149,6 +152,14 @@ export default function BlogPage() {
     navigate(`/blog/${blogId}`);
   };
 
+  const handleOpenCreateDialog = () => {
+    setCreateDialogOpen(true);
+  };
+
+  const handleCloseCreateDialog = () => {
+    setCreateDialogOpen(false);
+  };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <Box
@@ -182,7 +193,7 @@ export default function BlogPage() {
           />
         </FormControl>
         <IconButton size="small" aria-label="RSS feed">
-          <RssFeedRoundedIcon />
+          <AddCircleOutlineIcon onClick={handleOpenCreateDialog} />
         </IconButton>
       </Box>
       <Box
@@ -310,7 +321,7 @@ export default function BlogPage() {
             />
           </FormControl>
           <IconButton size="small" aria-label="RSS feed">
-            <RssFeedRoundedIcon />
+            <AddCircleOutlineIcon onClick={handleOpenCreateDialog} />
           </IconButton>
         </Box>
       </Box>
@@ -401,6 +412,10 @@ export default function BlogPage() {
         count={blogs?.totalPages ?? 0}
         page={page}
         onChange={(_event, value) => setPage(value)}
+      />
+      <CreateBlogForm
+        open={createDialogOpen}
+        handleClose={handleCloseCreateDialog}
       />
     </Box>
   );

@@ -62,8 +62,9 @@ const BlogDetailPage = () => {
   });
 
   const handleEditToggle = () => {
-    if (user?.username !== blog?.author.name && !isSuperAdmin) {
+    if (user?.name !== blog?.author.name && !isSuperAdmin) {
       setErrorMessage("You do not have permission to edit this blog.");
+      console.log(user?.name, blog?.author.name);
       setIsEditing(false);
       return;
     }
@@ -233,6 +234,7 @@ const BlogDetailPage = () => {
                 flexDirection: "row",
                 alignItems: "center",
               }}
+              component={"div"}
             >
               <Typography component={"span"} sx={{ mr: 2 }}>
                 Category
@@ -273,6 +275,7 @@ const BlogDetailPage = () => {
                 flexDirection: "row",
                 alignItems: "center",
               }}
+              component={"div"}
             >
               <Typography component={"span"} sx={{ mr: 2 }}>
                 Status
