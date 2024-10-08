@@ -41,6 +41,7 @@ const AdminListPage: React.FC = () => {
     queryKey: ["admins"],
     queryFn: getAdmins,
   });
+  console.log(error);
 
   const mutation = useMutation({
     mutationFn: ({
@@ -138,7 +139,6 @@ const AdminListPage: React.FC = () => {
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
-  if (error) return <Typography>Error fetching admins.</Typography>;
 
   return (
     <Container>

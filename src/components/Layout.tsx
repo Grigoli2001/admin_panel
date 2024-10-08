@@ -9,7 +9,7 @@ const Layout: React.FC = () => {
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Navbar />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Outlet /> {/* This is where route-specific content will be rendered */}
+        <Outlet />
       </Box>
       <Footer />
     </Box>
