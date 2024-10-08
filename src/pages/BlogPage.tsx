@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import Box from "@mui/material/Box";
@@ -14,10 +15,11 @@ import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import RssFeedRoundedIcon from "@mui/icons-material/RssFeedRounded";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useQuery } from "@tanstack/react-query";
 import { getBlogs } from "../api/blog";
 import { Blog } from "../types/blog.types";
+import CreateBlogForm from "../components/CreateBlog";
 import {
   InputLabel,
   MenuItem,
@@ -103,6 +105,8 @@ function Author({ name, updated_at }: { name: string; updated_at: string }) {
 }
 
 export default function BlogPage() {
+  const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
+
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null
   );
@@ -111,6 +115,7 @@ export default function BlogPage() {
   const [filterStatus, setFilterStatus] = React.useState<string>("");
   const [filterCategory, setFilterCategory] = React.useState<string>("");
   const PAGESIZE = 8;
+  const navigate = useNavigate();
 
   const { data: blogs, isLoading } = useQuery({
     queryKey: [
@@ -141,6 +146,18 @@ export default function BlogPage() {
       setPage(1);
       setFilterCategory(category);
     }
+  };
+
+  const handleBlogClick = (blogId: string) => {
+    navigate(`/blog/${blogId}`);
+  };
+
+  const handleOpenCreateDialog = () => {
+    setCreateDialogOpen(true);
+  };
+
+  const handleCloseCreateDialog = () => {
+    setCreateDialogOpen(false);
   };
 
   return (
@@ -176,7 +193,7 @@ export default function BlogPage() {
           />
         </FormControl>
         <IconButton size="small" aria-label="RSS feed">
-          <RssFeedRoundedIcon />
+          <AddCircleOutlineIcon onClick={handleOpenCreateDialog} />
         </IconButton>
       </Box>
       <Box
@@ -268,7 +285,7 @@ export default function BlogPage() {
         >
           <FormControl
             sx={{ minWidth: 120, ":focus": { borderColor: "green" } }}
-            variant="outlined"
+            variant="standard"
           >
             <InputLabel>Status</InputLabel>
             <Select
@@ -304,7 +321,7 @@ export default function BlogPage() {
             />
           </FormControl>
           <IconButton size="small" aria-label="RSS feed">
-            <RssFeedRoundedIcon />
+            <AddCircleOutlineIcon onClick={handleOpenCreateDialog} />
           </IconButton>
         </Box>
       </Box>
@@ -353,6 +370,7 @@ export default function BlogPage() {
                   onBlur={handleBlur}
                   tabIndex={0}
                   className={focusedCardIndex === 0 ? "Mui-focused" : ""}
+                  onClick={() => handleBlogClick(blog._id)}
                 >
                   {blog.image ? (
                     <CardMedia
@@ -394,6 +412,10 @@ export default function BlogPage() {
         count={blogs?.totalPages ?? 0}
         page={page}
         onChange={(_event, value) => setPage(value)}
+      />
+      <CreateBlogForm
+        open={createDialogOpen}
+        handleClose={handleCloseCreateDialog}
       />
     </Box>
   );

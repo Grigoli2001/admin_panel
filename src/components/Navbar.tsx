@@ -26,7 +26,7 @@ import { useAuth } from "../context/useAuth";
 
 const Navbar: React.FC = () => {
   const { toggleTheme, mode } = useTheme();
-  const { logout } = useAuth();
+  const { logout, isSuperAdmin } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Detect the screen size using Material UI's theme
@@ -53,14 +53,21 @@ const Navbar: React.FC = () => {
           variant="h6"
           sx={{
             flexGrow: 1,
-            cursor: "pointer",
-            textDecoration: "none",
-            color: "inherit",
           }}
-          component={Link}
-          to="/"
         >
-          Admin Panel
+          <Typography
+            component={Link}
+            variant="h6"
+            to={"/"}
+            sx={{
+              cursor: "pointer",
+              textDecoration: "none",
+              color: "inherit",
+              width: { xs: "100px", sm: "200px" },
+            }}
+          >
+            Admin Panel
+          </Typography>
         </Typography>
 
         {/* For Mobile: Display hamburger menu */}
@@ -88,11 +95,13 @@ const Navbar: React.FC = () => {
                 onKeyDown={toggleDrawer(false)}
               >
                 <List>
-                  <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/admins">
-                      <ListItemText primary="Admins" />
-                    </ListItemButton>
-                  </ListItem>
+                  {isSuperAdmin && (
+                    <ListItem disablePadding>
+                      <ListItemButton component={Link} to="/admins">
+                        <ListItemText primary="Admins" />
+                      </ListItemButton>
+                    </ListItem>
+                  )}
                   <ListItem disablePadding>
                     <ListItemButton component={Link} to="/">
                       <ListItemText primary="Blogs" />
@@ -125,9 +134,11 @@ const Navbar: React.FC = () => {
         ) : (
           // For Desktop: Normal buttons
           <Box sx={{ display: "flex", gap: 2 }}>
-            <Button color="inherit" component={Link} to="/admins">
-              Admins
-            </Button>
+            {isSuperAdmin && (
+              <Button color="inherit" component={Link} to="/admins">
+                Admins
+              </Button>
+            )}
             <Button color="inherit" component={Link} to="/">
               Blogs
             </Button>
