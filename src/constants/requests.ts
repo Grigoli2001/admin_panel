@@ -48,6 +48,10 @@ export const blogRequests = {
     method: "GET",
     url: "/admin/blogs",
   },
+  getBlogById: {
+    method: "GET",
+    url: "/blog/",
+  },
 };
 
 export const adminRequests = {
