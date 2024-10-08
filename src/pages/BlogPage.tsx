@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import Box from "@mui/material/Box";
@@ -111,6 +112,7 @@ export default function BlogPage() {
   const [filterStatus, setFilterStatus] = React.useState<string>("");
   const [filterCategory, setFilterCategory] = React.useState<string>("");
   const PAGESIZE = 8;
+  const navigate = useNavigate();
 
   const { data: blogs, isLoading } = useQuery({
     queryKey: [
@@ -141,6 +143,10 @@ export default function BlogPage() {
       setPage(1);
       setFilterCategory(category);
     }
+  };
+
+  const handleBlogClick = (blogId: string) => {
+    navigate(`/blog/${blogId}`);
   };
 
   return (
@@ -268,7 +274,7 @@ export default function BlogPage() {
         >
           <FormControl
             sx={{ minWidth: 120, ":focus": { borderColor: "green" } }}
-            variant="outlined"
+            variant="standard"
           >
             <InputLabel>Status</InputLabel>
             <Select
@@ -353,6 +359,7 @@ export default function BlogPage() {
                   onBlur={handleBlur}
                   tabIndex={0}
                   className={focusedCardIndex === 0 ? "Mui-focused" : ""}
+                  onClick={() => handleBlogClick(blog._id)}
                 >
                   {blog.image ? (
                     <CardMedia

@@ -22,9 +22,17 @@ export const editBlog = async (
   id: string,
   formData: FormData
 ): Promise<Response> => {
-  const response = await api.put(blogRequests.editBlog.url + id, {
-    formData,
+  // log formdata using for loop
+  for (const pair of formData.entries()) {
+    console.log(pair[0] + ", " + pair[1]);
+  }
+  console.log("edditBlog", blogRequests.editBlog.url + id);
+  const response = await api.put(blogRequests.editBlog.url + id, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
+  console.log("response", response);
   return response.data;
 };
 

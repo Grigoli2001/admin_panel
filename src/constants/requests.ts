@@ -35,7 +35,7 @@ export const blogRequests = {
   },
   editBlog: {
     method: "PUT",
-    url: "/blog/edit/",
+    url: "/blog/",
     headers: {
       "Content-Type": "multipart/form-data",
     },
