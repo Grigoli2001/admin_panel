@@ -1,7 +1,7 @@
 import api from "../hooks/axios";
 
 import { blogRequests } from "../constants/requests";
-import { BlogResponse } from "../types/blog.types";
+import { Blog, BlogResponse } from "../types/blog.types";
 
 export const createBlog = async (formData: FormData): Promise<Response> => {
   const response = await api.post(
@@ -42,11 +42,18 @@ export const getBlogs = async (
   page: number | null = null,
   limit: number | null = null,
   status: string = "",
+  category: string = "",
   title: string = ""
 ): Promise<BlogResponse> => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   const response = await api.get(
     blogRequests.getBlogs.url +
-      `?page=${page}&limit=${limit}&status=${status}&title=${title}`
+      `?page=${page}&limit=${limit}&status=${status}&title=${title}&category=${category}`
   );
+  return response.data;
+};
+
+export const getBlogById = async (id: string): Promise<Blog> => {
+  const response = await api.get(blogRequests.getBlogById.url + id);
   return response.data;
 };
