@@ -12,6 +12,8 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import SuperAdminRoute from "./routes/SuperAdminRoute";
 import "./App.css";
+import BlogDetailPage from "./pages/BlogDetailPage";
+import BlogList from "./pages/BlogListPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,10 +24,18 @@ const router = createBrowserRouter(
 
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
+          <Route index element={<BlogPage />} />
+          <Route
+            path="blog/create"
+            element={<BlogDetailPage isEditing={false} />}
+          />
+          <Route
+            path="blog/:id"
+            element={<BlogDetailPage isEditing={true} />}
+          />
           <Route element={<SuperAdminRoute />}>
-            <Route index element={<BlogPage />} />
+            <Route path="admins" element={<AdminListPage />} />
           </Route>
-          <Route path="admins" element={<AdminListPage />} />
         </Route>
       </Route>
     </Route>
