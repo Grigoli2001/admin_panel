@@ -82,8 +82,8 @@ const AdminListPage: React.FC = () => {
 
   const columns: GridColDef[] = [
     // { field: "id", headerName: "ID", width: 90 },
-    { field: "name", headerName: "Name", width: 150 },
-    { field: "email", headerName: "Email", width: 150 },
+    { field: "name", headerName: "Name", width: 200 },
+    { field: "email", headerName: "Email", width: 250 },
     { field: "status", headerName: "Status", width: 150 },
     { field: "createdAt", headerName: "Created At", width: 300 },
     {
@@ -143,7 +143,7 @@ const AdminListPage: React.FC = () => {
   return (
     <Container>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-        <Typography variant="h4">Admins List</Typography>
+        <Typography variant="h4">Admins</Typography>
         {/* Add Admin Button */}
         <Button
           variant="contained"

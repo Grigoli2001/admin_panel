@@ -16,7 +16,7 @@ export interface AuthContextType {
 
 export interface MeResponse {
   _id: string;
-  username: string;
+  name: string;
   email: string;
   superAdmin: boolean;
   created_at: string;
