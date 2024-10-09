@@ -26,22 +26,17 @@ const AdminListPage: React.FC = () => {
     id: string;
     status: string | null;
   } | null>(null);
-  const [openSnackbar, setOpenSnackbar] = React.useState(false);
+  const [message, setMessage] = React.useState<string | null>(null);
   const [newAdmin, setNewAdmin] = React.useState({
     name: "",
     email: "",
     password: "",
   });
 
-  const {
-    data: admins,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: admins, isLoading } = useQuery({
     queryKey: ["admins"],
     queryFn: getAdmins,
   });
-  console.log(error);
 
   const mutation = useMutation({
     mutationFn: ({
@@ -54,6 +49,10 @@ const AdminListPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admins"] });
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
+      setMessage(error.response.data.error); // Show error notification
+    },
   });
   const addAdminMutation = useMutation({
     mutationFn: (newAdminData: {
@@ -64,8 +63,12 @@ const AdminListPage: React.FC = () => {
       createAdmin(newAdminData.email, newAdminData.password, newAdminData.name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admins"] });
-      setOpenSnackbar(true); // Show success notification
+      setMessage("Succesfully changed status"); // Show success notification
       setAddAdminDialogOpen(false); // Close add admin dialog
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
+      setMessage(error.response.data.error); // Show error notification
     },
   });
 
@@ -135,9 +138,6 @@ const AdminListPage: React.FC = () => {
       });
     }
     setDialogOpen(false);
-  };
-  const handleSnackbarClose = () => {
-    setOpenSnackbar(false);
   };
 
   return (
@@ -250,10 +250,10 @@ const AdminListPage: React.FC = () => {
 
       {/* Success Snackbar */}
       <Snackbar
-        open={openSnackbar}
+        open={!!message}
         autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        message="Admin status updated successfully"
+        onClose={() => setMessage(null)}
+        message={message}
       />
     </Container>
   );
