@@ -235,7 +235,7 @@ const BlogDetailPage = () => {
           </Box>
         </Grid>
 
-        {/* Blog Meta Info */}
+        {/* Blog Info */}
         <Box component={"div"} sx={{ position: "relative" }}>
           <Grid size={{ xs: 12, md: 4 }} sx={{ position: "fixed" }}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
