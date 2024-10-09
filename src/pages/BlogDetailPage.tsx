@@ -158,7 +158,16 @@ const BlogDetailPage = () => {
                 }
               />
             ) : (
-              <Typography variant="h4">{blog.title}</Typography>
+              <Typography
+                variant="h4"
+                sx={{
+                  textWrap: "wrap",
+                  overflowWrap: "break-word",
+                  maxWidth: "100%",
+                }}
+              >
+                {blog.title}
+              </Typography>
             )}
 
             {isEditing ? (
@@ -172,7 +181,14 @@ const BlogDetailPage = () => {
                 rows={6}
               />
             ) : (
-              <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  whiteSpace: "pre-wrap",
+                  textWrap: "wrap",
+                  overflowWrap: "break-word",
+                }}
+              >
                 {blog.content}
               </Typography>
             )}
@@ -220,104 +236,109 @@ const BlogDetailPage = () => {
         </Grid>
 
         {/* Blog Meta Info */}
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Typography variant="subtitle1">
-              Author: {blog.author.name}
-            </Typography>
-            <Typography variant="subtitle2">
-              Last updated: {new Date(blog.updated_at).toLocaleString()}
-            </Typography>
-            <Typography
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-              component={"div"}
-            >
-              <Typography component={"span"} sx={{ mr: 2 }}>
-                Category
+        <Box component={"div"} sx={{ position: "relative" }}>
+          <Grid size={{ xs: 12, md: 4 }} sx={{ position: "fixed" }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Typography variant="subtitle1">
+                Author: {blog.author.name}
               </Typography>
-              {isEditing ? (
-                <FormControl
-                  sx={{
-                    minWidth: 120,
-                    ":focus": { borderColor: "green" },
-                    height: 40,
-                    ml: 1,
-                    alignItems: "center",
-                  }}
-                  variant="outlined"
-                >
-                  <Select
-                    value={blog.category}
-                    onChange={(e) =>
-                      setEditedBlog({ ...editedBlog, category: e.target.value })
-                    }
-                    size="small"
+              <Typography variant="subtitle2">
+                Last updated: {new Date(blog.updated_at).toLocaleString()}
+              </Typography>
+              <Typography
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+                component={"div"}
+              >
+                <Typography component={"span"} sx={{ mr: 2 }}>
+                  Category
+                </Typography>
+                {isEditing ? (
+                  <FormControl
+                    sx={{
+                      minWidth: 120,
+                      ":focus": { borderColor: "green" },
+                      height: 40,
+                      ml: 1,
+                      alignItems: "center",
+                    }}
                     variant="outlined"
                   >
-                    <MenuItem value="other">Other</MenuItem>
-                    <MenuItem value="engineering">Engineering</MenuItem>
-                    <MenuItem value="design">Design</MenuItem>
-                    <MenuItem value="product">Product</MenuItem>
-                    <MenuItem value="company">Company</MenuItem>
-                  </Select>
-                </FormControl>
-              ) : (
-                capitalize(blog.category)
-              )}
-            </Typography>
-            <Typography
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-              component={"div"}
-            >
-              <Typography component={"span"} sx={{ mr: 2 }}>
-                Status
+                    <Select
+                      value={blog.category}
+                      onChange={(e) =>
+                        setEditedBlog({
+                          ...editedBlog,
+                          category: e.target.value,
+                        })
+                      }
+                      size="small"
+                      variant="outlined"
+                    >
+                      <MenuItem value="other">Other</MenuItem>
+                      <MenuItem value="engineering">Engineering</MenuItem>
+                      <MenuItem value="design">Design</MenuItem>
+                      <MenuItem value="product">Product</MenuItem>
+                      <MenuItem value="company">Company</MenuItem>
+                    </Select>
+                  </FormControl>
+                ) : (
+                  capitalize(blog.category)
+                )}
               </Typography>
-              {isEditing ? (
-                <FormControl
-                  sx={{
-                    minWidth: 120,
-                    ":focus": { borderColor: "green" },
-                    height: 40,
-                    ml: 1,
-                    alignItems: "center",
-                  }}
-                  variant="outlined"
-                >
-                  <Select
-                    value={editedBlog.status}
-                    onChange={(e) =>
-                      setEditedBlog({ ...editedBlog, status: e.target.value })
-                    }
-                    size="small"
+              <Typography
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+                component={"div"}
+              >
+                <Typography component={"span"} sx={{ mr: 2 }}>
+                  Status
+                </Typography>
+                {isEditing ? (
+                  <FormControl
+                    sx={{
+                      minWidth: 120,
+                      ":focus": { borderColor: "green" },
+                      height: 40,
+                      ml: 1,
+                      alignItems: "center",
+                    }}
                     variant="outlined"
                   >
-                    <MenuItem value="active">Active</MenuItem>
-                    <MenuItem value="inactive">Inactive</MenuItem>
-                  </Select>
-                </FormControl>
-              ) : (
-                capitalize(blog.status)
-              )}
-            </Typography>
+                    <Select
+                      value={editedBlog.status}
+                      onChange={(e) =>
+                        setEditedBlog({ ...editedBlog, status: e.target.value })
+                      }
+                      size="small"
+                      variant="outlined"
+                    >
+                      <MenuItem value="active">Active</MenuItem>
+                      <MenuItem value="inactive">Inactive</MenuItem>
+                    </Select>
+                  </FormControl>
+                ) : (
+                  capitalize(blog.status)
+                )}
+              </Typography>
 
-            {/* Edit / Save Button */}
-            <Button
-              variant="contained"
-              onClick={isEditing ? handleSave : handleEditToggle}
-              color={isEditing ? "primary" : "secondary"}
-            >
-              {isEditing ? "Save Changes" : "Edit Blog"}
-            </Button>
-          </Box>
-        </Grid>
+              {/* Edit / Save Button */}
+              <Button
+                variant="contained"
+                onClick={isEditing ? handleSave : handleEditToggle}
+                color={isEditing ? "primary" : "secondary"}
+              >
+                {isEditing ? "Save Changes" : "Edit Blog"}
+              </Button>
+            </Box>
+          </Grid>
+        </Box>
       </Grid>
       <Snackbar
         open={errorMessage ? true : false}
