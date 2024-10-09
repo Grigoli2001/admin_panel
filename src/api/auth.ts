@@ -15,6 +15,7 @@ export const createAdmin = async (
     password,
     username,
   });
+  console.log("response", response);
   return response.data;
 };
 

@@ -388,7 +388,12 @@ export default function BlogPage() {
                     <Typography gutterBottom variant="caption" component="div">
                       {blog.category}
                     </Typography>
-                    <Typography gutterBottom variant="h6" component="div">
+                    <Typography
+                      gutterBottom
+                      variant="h6"
+                      component="div"
+                      sx={{ maxWidth: "80%", overflowWrap: "break-word" }}
+                    >
                       {blog.title}
                     </Typography>
                     <StyledTypography
