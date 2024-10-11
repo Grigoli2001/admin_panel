@@ -5,6 +5,7 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import { toggleAdminStatus } from "../api/admin";
 import { useMutation, QueryClient } from "@tanstack/react-query";
@@ -24,7 +25,7 @@ export default function ToggleDialog({
   setMessage,
   selectedAdmin,
 }: ToggleDialogProps) {
-  const mutation = useMutation({
+  const { mutate: toggleMutate, isPending } = useMutation({
     mutationFn: ({
       adminId,
       status,
@@ -42,7 +43,7 @@ export default function ToggleDialog({
   });
   const handleToggleStatus = () => {
     if (selectedAdmin) {
-      mutation.mutate({
+      toggleMutate({
         adminId: selectedAdmin.id,
         status: null,
       });
@@ -71,7 +72,11 @@ export default function ToggleDialog({
               Cancel
             </Button>
             <Button onClick={handleToggleStatus} color="secondary">
-              Confirm
+              {isPending ? (
+                <CircularProgress size={24} sx={{ color: "#fff" }} />
+              ) : (
+                "Confirm"
+              )}
             </Button>
           </DialogActions>
         </Dialog>
