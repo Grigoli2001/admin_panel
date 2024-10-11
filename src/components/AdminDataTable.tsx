@@ -8,7 +8,7 @@ interface DataTableProps {
   isLoading: boolean;
 }
 
-export default function DataTable({
+export default function AdminDataTable({
   admins,
   handleDialogOpen,
   isLoading,

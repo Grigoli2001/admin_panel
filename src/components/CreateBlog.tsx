@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -34,14 +35,21 @@ const CreateBlogForm: React.FC<CreateBlogFormProps> = ({
     category: "other",
     image: "" as string | File,
   });
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // State to handle image preview
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const mutation = useMutation({
+  const { mutate: mutateNewBlog, isPending } = useMutation({
     mutationFn: (formData: FormData) => createBlog(formData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blogs"] }); // Invalidate the blogs query to refetch
-      handleClose(); // Close the popup on success
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      setNewBlog({
+        title: "",
+        content: "",
+        status: "inactive",
+        category: "other",
+        image: "",
+      });
+      handleClose();
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
@@ -80,7 +88,7 @@ const CreateBlogForm: React.FC<CreateBlogFormProps> = ({
     if (newBlog.image instanceof File) {
       formData.append("image", newBlog.image);
     }
-    mutation.mutate(formData);
+    mutateNewBlog(formData);
   };
 
   return (
@@ -214,7 +222,11 @@ const CreateBlogForm: React.FC<CreateBlogFormProps> = ({
           Cancel
         </Button>
         <Button onClick={handleSave} color="primary" variant="contained">
-          Create Blog
+          {isPending ? (
+            <CircularProgress size={24} sx={{ color: "#fff" }} />
+          ) : (
+            "Save"
+          )}
         </Button>
       </DialogActions>
       <Snackbar

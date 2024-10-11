@@ -8,6 +8,7 @@ import {
   MenuItem,
   capitalize,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { Blog } from "../types/blog.types";
@@ -42,7 +43,7 @@ export default function BlogDetails({
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const mutation = useMutation({
+  const { mutate: mutateBlog, isPending } = useMutation({
     mutationFn: ({
       blogId,
       formData,
@@ -89,7 +90,7 @@ export default function BlogDetails({
       formdata.append("status", editedBlog.status);
       formdata.append("image", editedBlog.image);
 
-      mutation.mutate({ blogId: id, formData: formdata });
+      mutateBlog({ blogId: id, formData: formdata });
     } else {
       setIsEditing(false);
     }
@@ -126,6 +127,7 @@ export default function BlogDetails({
       });
     }
   };
+
   return (
     <>
       <Grid container spacing={2}>
@@ -314,8 +316,15 @@ export default function BlogDetails({
                 variant="contained"
                 onClick={isEditing ? handleSave : handleEditToggle}
                 color={isEditing ? "primary" : "secondary"}
+                disabled={isPending}
               >
-                {isEditing ? "Save Changes" : "Edit Blog"}
+                {isPending ? (
+                  <CircularProgress size={24} sx={{ color: "#fff" }} />
+                ) : isEditing ? (
+                  "Save Changes"
+                ) : (
+                  "Edit Blog"
+                )}
               </Button>
             </Box>
           </Grid>
