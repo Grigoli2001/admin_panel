@@ -4,6 +4,8 @@ import { blogRequests } from "../constants/requests";
 import { Blog, BlogResponse } from "../types/blog.types";
 
 export const createBlog = async (formData: FormData): Promise<Response> => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
   const response = await api.post(blogRequests.createBlog.url, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -16,6 +18,7 @@ export const editBlog = async (
   id: string,
   formData: FormData
 ): Promise<Response> => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
   const response = await api.put(blogRequests.editBlog.url + id, formData, {
     headers: {
       "Content-Type": "multipart/form-data",

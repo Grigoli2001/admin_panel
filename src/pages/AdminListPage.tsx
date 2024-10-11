@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAdmins } from "../api/admin";
 import { Container, Button, Typography, Snackbar, Box } from "@mui/material";
-import DataTable from "../components/DataTable";
+import AdminDataTable from "../components/AdminDataTable";
 import AdminDialog from "../components/AdminDialog";
 import ToggleDialog from "../components/ToggleDialog";
 
@@ -51,7 +51,7 @@ const AdminListPage = () => {
       </Box>
 
       {/* Data Table usign DataGrid */}
-      <DataTable
+      <AdminDataTable
         admins={Array.isArray(admins) ? admins : []}
         handleDialogOpen={handleDialogOpen}
         isLoading={isLoading}

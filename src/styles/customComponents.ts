@@ -2,6 +2,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 export const SyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
@@ -37,4 +38,13 @@ export const StyledTypography = styled(Typography)({
   WebkitLineClamp: 2,
   overflow: "hidden",
   textOverflow: "ellipsis",
+});
+
+export const DisabledBackground = styled(Box)({
+  width: "100%",
+  height: "100%",
+  position: "fixed",
+  background: "#ccc",
+  opacity: 0.5,
+  zIndex: 1,
 });

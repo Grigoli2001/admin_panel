@@ -6,6 +6,7 @@ import {
   TextField,
   DialogActions,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { createAdmin } from "../api/auth";
@@ -33,9 +34,9 @@ export default function AdminDialog({
   });
   const handleAddAdmin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    addAdminMutation.mutate(newAdmin);
+    addAdminMutate(newAdmin);
   };
-  const addAdminMutation = useMutation({
+  const { mutate: addAdminMutate, isPending } = useMutation({
     mutationFn: (newAdminData: {
       name: string;
       email: string;
@@ -97,7 +98,11 @@ export default function AdminDialog({
                 Cancel
               </Button>
               <Button type="submit" variant="contained" color="primary">
-                Add Admin
+                {isPending ? (
+                  <CircularProgress size={24} sx={{ color: "#fff" }} />
+                ) : (
+                  "Add"
+                )}
               </Button>
             </DialogActions>
           </Box>
