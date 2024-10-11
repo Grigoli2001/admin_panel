@@ -11,10 +11,13 @@ import {
   CircularProgress,
   FormControlLabel,
   Checkbox,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useAuth } from "../context/useAuth";
 import { useNavigate } from "react-router-dom";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
@@ -27,15 +30,14 @@ const SignIn: React.FC = () => {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
 
-  // Handle checkbox state
   const handleRememberMeChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRememberMe(event.target.checked);
   };
 
-  // Handle form submission
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setEmailError(false);
@@ -56,6 +58,10 @@ const SignIn: React.FC = () => {
     }
 
     await loginUser(email, password, rememberMe);
+  };
+
+  const togglePasswordView = () => {
+    setIsPasswordHidden(!isPasswordHidden);
   };
 
   const loginUser = async (
@@ -133,7 +139,6 @@ const SignIn: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -141,13 +146,32 @@ const SignIn: React.FC = () => {
                   fullWidth
                   name="password"
                   label="Password"
-                  type="password"
+                  type={isPasswordHidden ? "password" : "text"}
                   id="password"
                   autoComplete="current-password"
                   error={passwordError}
                   helperText={passwordErrorMessage}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={togglePasswordView}
+                            edge="end"
+                          >
+                            {isPasswordHidden ? (
+                              <VisibilityOff />
+                            ) : (
+                              <Visibility />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
                 <FormControlLabel
                   control={
