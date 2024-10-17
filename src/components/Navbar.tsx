@@ -14,7 +14,7 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useTheme } from "../context/useThemeContext";
+import { useTheme } from "../context/themeContext/useThemeContext";
 import MenuIcon from "@mui/icons-material/Menu"; // Hamburger menu icon
 import useMediaQuery from "@mui/material/useMediaQuery"; // For responsiveness
 import { useTheme as MUITheme } from "@mui/material/styles"; // Access MUI theme
@@ -22,7 +22,7 @@ import { useTheme as MUITheme } from "@mui/material/styles"; // Access MUI theme
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "../context/authContext/useAuth";
 
 const Navbar: React.FC = () => {
   const { toggleTheme, mode } = useTheme();
@@ -47,7 +47,7 @@ const Navbar: React.FC = () => {
     };
 
   return (
-    <AppBar position="static">
+    <AppBar position="fixed">
       <Toolbar>
         <Typography
           variant="h6"

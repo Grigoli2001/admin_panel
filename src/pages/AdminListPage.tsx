@@ -2,9 +2,9 @@ import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAdmins } from "../api/admin";
 import { Container, Button, Typography, Snackbar, Box } from "@mui/material";
-import AdminDataTable from "../components/AdminDataTable";
-import AdminDialog from "../components/AdminDialog";
-import ToggleDialog from "../components/ToggleDialog";
+import AdminDataTable from "../components/Admins/AdminDataTable";
+import AdminDialog from "../components/Admins/AdminDialog";
+import ToggleDialog from "../components/Admins/ToggleDialog";
 
 const AdminListPage = () => {
   const queryClient = useQueryClient();

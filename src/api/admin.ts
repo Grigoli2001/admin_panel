@@ -1,9 +1,10 @@
 import api from "../hooks/axios";
+import { wait } from "../utils/utils";
 import { adminRequests } from "../constants/requests";
 import { GetAdminsResponse, Admin } from "../types/admin.types";
 
 export const getAdmins = async (): Promise<GetAdminsResponse> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await wait(500);
   const response = await api.get(adminRequests.getAdmins.url);
 
   return response.data;

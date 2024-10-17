@@ -15,13 +15,13 @@ import {
   InputAdornment,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "../context/authContext/useAuth";
 import { useNavigate } from "react-router-dom";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
@@ -29,7 +29,6 @@ const SignIn: React.FC = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
 
   const handleRememberMeChange = (
@@ -42,18 +41,15 @@ const SignIn: React.FC = () => {
     event.preventDefault();
     setEmailError(false);
     setPasswordError(false);
-    setLoading(true);
 
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage("Please enter a valid email");
-      setLoading(false);
       return;
     }
     if (!password || password.length < 8) {
       setPasswordError(true);
       setPasswordErrorMessage("Please enter a valid password");
-      setLoading(false);
       return;
     }
 
@@ -87,7 +83,6 @@ const SignIn: React.FC = () => {
           setEmailError(true);
           setEmailErrorMessage("Account is inactive.");
         }
-        setLoading(false);
       });
   };
 
@@ -195,9 +190,9 @@ const SignIn: React.FC = () => {
                     height: 50,
                     background: "linear-gradient(to right, #6a11cb, #2575fc)",
                   }}
-                  disabled={loading}
+                  disabled={isLoading}
                 >
-                  {loading ? (
+                  {isLoading ? (
                     <CircularProgress size={24} sx={{ color: "#fff" }} />
                   ) : (
                     "Sign In"

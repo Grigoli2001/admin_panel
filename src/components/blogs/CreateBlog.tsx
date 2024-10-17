@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createBlog } from "../api/blog";
+import { createBlog } from "../../api/blog";
 
 interface CreateBlogFormProps {
   open: boolean;

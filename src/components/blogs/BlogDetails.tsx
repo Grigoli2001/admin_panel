@@ -11,11 +11,11 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { Blog } from "../types/blog.types";
+import { Blog } from "../../types/blog.types";
 import { useRef, useState } from "react";
 import { useMutation, QueryClient } from "@tanstack/react-query";
-import { editBlog } from "../api/blog";
-import { MeResponse } from "../types/auth.types";
+import { editBlog } from "../../api/blog";
+import { MeResponse } from "../../types/auth.types";
 
 export default function BlogDetails({
   blog,
@@ -130,7 +130,11 @@ export default function BlogDetails({
 
   return (
     <>
-      <Grid container spacing={2}>
+      <Grid
+        container
+        spacing={2}
+        sx={{ justifyContent: { xs: "center", md: "normal" } }}
+      >
         <Grid size={{ xs: 12, md: 8 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {isEditing ? (
@@ -148,6 +152,8 @@ export default function BlogDetails({
                   textWrap: "wrap",
                   overflowWrap: "break-word",
                   maxWidth: "100%",
+                  borderBottom: "1px solid",
+                  borderColor: "divider",
                 }}
               >
                 {blog.title}
@@ -183,11 +189,13 @@ export default function BlogDetails({
                 src={imagePreview || blog.image}
                 alt={blog.title}
                 sx={{
-                  maxWidth: "100%",
                   height: "auto",
                   cursor: "pointer", // Make the image look clickable
                   border: "2px solid", // Optional styling for edit mode
                   borderColor: "primary.main",
+                  maxWidth: "100%",
+                  maxHeight: 800,
+                  objectFit: "contain",
                 }}
                 onClick={handleImageClick} // Trigger input click on image click
               />
@@ -196,7 +204,12 @@ export default function BlogDetails({
                 component="img"
                 src={blog.image}
                 alt={blog.title}
-                sx={{ maxWidth: "100%", height: "auto" }}
+                sx={{
+                  maxWidth: "100%",
+                  height: "auto",
+                  maxHeight: 800,
+                  objectFit: "contain",
+                }}
               />
             ) : null}
 
@@ -207,6 +220,7 @@ export default function BlogDetails({
                 type="file"
                 inputRef={fileInputRef}
                 onChange={handleImageChange}
+                inputProps={{ accept: "image/*" }}
               />
             )}
             {isEditing && !blog.image && !imagePreview && (
@@ -214,15 +228,41 @@ export default function BlogDetails({
                 type="file"
                 inputRef={fileInputRef}
                 onChange={handleImageChange}
+                inputProps={{ accept: "image/*" }}
               />
             )}
           </Box>
         </Grid>
 
-        {/* Blog Info */}
-        <Box component={"div"} sx={{ position: "relative" }}>
-          <Grid size={{ xs: 12, md: 4 }} sx={{ position: "fixed" }}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {/* Blog sidebar */}
+        <Box
+          component={"div"}
+          sx={{
+            position: "relative",
+            width: { sx: "100%" },
+            mt: "-50px",
+          }}
+        >
+          <Grid
+            size={{ xs: 12, md: 4 }}
+            sx={{
+              position: { xs: "static", md: "fixed" },
+              right: { xs: "auto", md: 0 },
+              width: { xs: "100%", md: "30%" },
+              padding: { xs: 2, md: 4 },
+              borderLeft: { xs: "none", md: "1px solid" },
+              borderColor: { xs: "none", md: "divider" },
+              height: { xs: "auto", md: "100%" },
+              overflow: { xs: "visible", md: "auto" },
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+              }}
+            >
               <Typography variant="subtitle1">
                 Author: {blog.author.name}
               </Typography>

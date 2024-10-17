@@ -1,21 +1,22 @@
 import {
   createContext,
-  useState,
   useCallback,
   useLayoutEffect,
   useEffect,
   useRef,
   ReactNode,
+  useReducer,
 } from "react";
-import api from "../hooks/axios";
-import { AuthContextType, MeResponse } from "../types/auth.types";
+import api from "../../hooks/axios";
+import { AuthActionTypes, AuthContextType } from "../../types/auth.types";
 import {
   login as loginApi,
   logout as logoutApi,
   getMe as getMeApi,
   refreshToken,
-} from "../api/auth";
+} from "../../api/auth";
 import { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
+import { authReducer, initialState } from "./AuthReducer";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -24,61 +25,57 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<MeResponse | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    !!localStorage.getItem("accessToken") ||
-      !!sessionStorage.getItem("accessToken")
-  );
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken")
-  );
-  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const tokenRef = useRef(token);
+  const [state, dispatch] = useReducer(authReducer, initialState);
+  const tokenRef = useRef(state.token);
 
   const fetchUser = useCallback(async () => {
     try {
       const fetchedUser = await getMeApi();
-      setUser(fetchedUser);
-      setIsSuperAdmin(fetchedUser.superAdmin);
+      dispatch({
+        type: AuthActionTypes.SET_USER,
+        payload: { user: fetchedUser },
+      });
     } catch (error) {
       console.error("Error fetching user:", error);
     }
   }, []);
+
   useEffect(() => {
     const initializeAuth = async () => {
-      if (isAuthenticated) {
-        setIsLoading(true);
+      if (state.isAuthenticated) {
+        dispatch({
+          type: AuthActionTypes.SET_LOADING,
+          payload: { isLoading: true },
+        });
         try {
           await fetchUser();
         } catch (error) {
           console.error("Error fetching user:", error);
         } finally {
-          setIsLoading(false);
+          dispatch({
+            type: AuthActionTypes.SET_LOADING,
+            payload: { isLoading: false },
+          });
         }
       } else {
-        setIsLoading(false);
+        dispatch({
+          type: AuthActionTypes.SET_LOADING,
+          payload: { isLoading: false },
+        });
       }
     };
 
     initializeAuth();
-  }, [isAuthenticated, fetchUser]);
-
-  useEffect(() => {
-    if (isAuthenticated && !user) {
-      fetchUser();
-    }
-  }, [isAuthenticated, user, fetchUser]);
+  }, [state.isAuthenticated, fetchUser]);
 
   const login = useCallback(
     async (email: string, password: string, rememberMe: boolean) => {
-      setIsLoading(true);
+      dispatch({
+        type: AuthActionTypes.SET_LOADING,
+        payload: { isLoading: true },
+      });
       try {
         const response = await loginApi(email, password);
-        if (!response || !response.accessToken) {
-          throw new Error("Login failed, no accessToken found");
-        }
         const { accessToken } = response;
 
         if (rememberMe) {
@@ -87,33 +84,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           sessionStorage.setItem("accessToken", accessToken);
         }
 
-        setToken(accessToken);
-        setIsAuthenticated(true);
+        dispatch({
+          type: AuthActionTypes.LOGIN,
+          payload: { token: accessToken },
+        });
         await fetchUser();
       } catch (error) {
         console.error("Login error:", error);
         throw error;
       } finally {
-        setIsLoading(false);
+        dispatch({
+          type: AuthActionTypes.SET_LOADING,
+          payload: { isLoading: false },
+        });
       }
     },
     [fetchUser]
   );
 
   const logout = useCallback(async () => {
-    setIsLoading(true);
+    dispatch({
+      type: AuthActionTypes.SET_LOADING,
+      payload: { isLoading: true },
+    });
     try {
       await logoutApi();
       localStorage.removeItem("accessToken");
       sessionStorage.removeItem("accessToken");
-      setToken(null);
-      setIsAuthenticated(false);
-      setUser(null);
-      setIsSuperAdmin(false);
+      dispatch({ type: AuthActionTypes.LOGOUT });
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      setIsLoading(false);
+      dispatch({
+        type: AuthActionTypes.SET_LOADING,
+        payload: { isLoading: false },
+      });
     }
   }, []);
 
@@ -151,8 +156,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             } else {
               sessionStorage.setItem("accessToken", accessToken);
             }
-            setToken(accessToken);
-            setIsAuthenticated(true);
+            dispatch({
+              type: AuthActionTypes.LOGIN,
+              payload: { token: accessToken },
+            });
+            tokenRef.current = accessToken;
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
             return api(originalRequest);
           } catch (refreshError) {
@@ -176,23 +184,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [logout]);
 
   useEffect(() => {
-    tokenRef.current = token;
-  }, [token]);
+    tokenRef.current = state.token;
+  }, [state.token]);
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated,
-        isSuperAdmin,
-        login,
-        logout,
-        isLoading,
-      }}
-    >
+    <AuthContext.Provider value={{ ...state, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export default AuthProvider;
