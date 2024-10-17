@@ -26,3 +26,7 @@ export const formatTime = (date: string) => {
     minute: "numeric",
   });
 };
+
+export const wait = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};

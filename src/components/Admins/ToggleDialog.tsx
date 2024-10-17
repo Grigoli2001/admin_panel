@@ -7,7 +7,7 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-import { toggleAdminStatus } from "../api/admin";
+import { toggleAdminStatus } from "../../api/admin";
 import { useMutation, QueryClient } from "@tanstack/react-query";
 
 interface ToggleDialogProps {
