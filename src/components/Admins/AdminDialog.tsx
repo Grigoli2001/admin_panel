@@ -9,7 +9,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { createAdmin } from "../api/auth";
+import { createAdmin } from "../../api/auth";
 import { useState } from "react";
 
 import { QueryClient } from "@tanstack/react-query";

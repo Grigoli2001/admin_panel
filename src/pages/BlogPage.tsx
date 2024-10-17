@@ -4,14 +4,14 @@ import Box from "@mui/material/Box";
 import { useQuery } from "@tanstack/react-query";
 import { getBlogs } from "../api/blog";
 import { Blog } from "../types/blog.types";
-import CreateBlogForm from "../components/CreateBlog";
+import CreateBlogForm from "../components/blogs/CreateBlog";
 import { Pagination } from "@mui/material";
 import {
   BlogSearchSmallScreen,
   BlogCategory,
-} from "../components/BlogPageComponents";
+} from "../components/blogs/BlogPageComponents";
 
-import BlogList from "../components/BlogList";
+import BlogList from "../components/blogs/BlogList";
 export default function BlogPage() {
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
 
@@ -84,7 +84,6 @@ export default function BlogPage() {
         handleOpenCreateDialog={handleOpenCreateDialog}
       />
 
-      {/* Blog Liiiist Heere */}
       <BlogList
         blogs={blogs?.blogs as Blog[]}
         isLoading={isLoading}
