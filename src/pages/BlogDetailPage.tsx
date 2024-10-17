@@ -3,9 +3,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getBlogById } from "../api/blog";
 import { Box, Skeleton, Snackbar } from "@mui/material";
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "../context/authContext/useAuth";
 import Grid from "@mui/material/Grid2";
-import BlogDetails from "../components/BlogDetails";
+import BlogDetails from "../components/blogs/BlogDetails";
 
 const BlogDetailPage = () => {
   const { id } = useParams<{ id: string }>();

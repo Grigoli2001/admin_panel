@@ -1,12 +1,13 @@
 import { Skeleton, CardMedia, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { Blog } from "../types/blog.types";
+import { Blog } from "../../types/blog.types";
 import {
   SyledCard,
   SyledCardContent,
   StyledTypography,
-} from "../styles/customComponents";
+} from "../../styles/customComponents";
 import { Author } from "./BlogPageComponents";
+import { useEffect } from "react";
 
 export default function BlogList({
   isLoading,
@@ -23,19 +24,19 @@ export default function BlogList({
   handleFocus: (index: number) => void;
   handleBlur: () => void;
 }) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [blogs]);
   return (
     <Grid container spacing={2} columns={12}>
       {isLoading
         ? Array.from({ length: 8 }).map((_, index) => (
-            <Grid
-              key={index}
-              size={{ xs: 12, md: index < 2 ? 6 : 4 }} // First two skeletons are md:6, others md:4
-            >
+            <Grid key={index} size={{ xs: 12, md: index < 2 ? 6 : 4 }}>
               <Skeleton
                 sx={{ bgcolor: "grey.600", mt: 1 }}
                 variant="rounded"
                 width="100%"
-                height={200}
+                height={400}
                 animation="wave"
               />
               <Skeleton
@@ -74,12 +75,15 @@ export default function BlogList({
                 {blog.image ? (
                   <CardMedia
                     component="img"
+                    loading="lazy"
                     alt="green iguana"
                     image={blog.image}
                     aspect-ratio="16 / 9"
                     sx={{
                       borderBottom: "1px solid",
                       borderColor: "divider",
+                      maxHeight: 400,
+                      objectFit: "cover",
                     }}
                   />
                 ) : null}

@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { GridRowsProp, GridColDef, DataGrid } from "@mui/x-data-grid";
-import { Admin } from "../types/admin.types";
+import { Admin } from "../../types/admin.types";
 
 interface DataTableProps {
   admins: Admin[];
@@ -19,8 +19,7 @@ export default function AdminDataTable({
         name: admin.name,
         email: admin.email,
         status: admin.status,
-        createdAt:
-          admin.created_at && new Date(admin.created_at).toLocaleString(),
+        createdAt: admin.created_at ? new Date(admin.created_at) : null,
       }))
     : [];
   const columns: GridColDef[] = [
@@ -28,7 +27,13 @@ export default function AdminDataTable({
     { field: "name", headerName: "Name", width: 200 },
     { field: "email", headerName: "Email", width: 250 },
     { field: "status", headerName: "Status", width: 150 },
-    { field: "createdAt", headerName: "Created At", width: 300 },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      width: 300,
+      renderCell: (params) =>
+        params.value ? new Date(params.value).toLocaleString() : "N/A",
+    },
     {
       field: "actions",
       headerName: "Actions",

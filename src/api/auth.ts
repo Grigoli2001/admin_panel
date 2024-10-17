@@ -1,4 +1,5 @@
 import api from "../hooks/axios";
+import { wait } from "../utils/utils";
 import { authRequests } from "../constants/requests";
 import {
   LoginResponse,
@@ -23,7 +24,7 @@ export const login = async (
   email: string,
   password: string
 ): Promise<LoginResponse> => {
-  console.log("sending login request");
+  await wait(500);
   const response = await api.post(authRequests.login.url, {
     email,
     password,

@@ -7,7 +7,7 @@ import {
 import LoginPage from "./pages/LoginPage";
 import BlogPage from "./pages/BlogPage";
 import AdminListPage from "./pages/AdminListPage";
-import Layout from "./components/Layout";
+import Layout from "./Layouts/Layout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import SuperAdminRoute from "./routes/SuperAdminRoute";
